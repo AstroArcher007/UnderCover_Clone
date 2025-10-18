@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undercover & Mr. White</title>
+    
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333;
+            --error-color: #d0021b;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var:(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-background);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .screen {
+            padding: 25px 30px;
+        }
+
+        /* Utility class to hide screens */
+        .hidden {
+            display: none;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+        }
+        h3 {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* --- Setup Screen --- */
+        #player-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            width: 100%; /* Fallback and for single inputs */
+            margin-bottom: 10px; /* Added margin */
+        }
+        
+        .setting-item input[type="number"] {
+            margin-bottom: 0; /* Override for settings */
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            flex-shrink: 0; /* Prevents button from shrinking in flex */
+            width: 100%; /* Default to full width */
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #357abd;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.inline {
+            width: auto;
+            margin-top: 0;
+            margin-bottom: 10px; /* Added margin */
+        }
+
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+        button.secondary:hover {
+            background-color: #d48e1a;
+        }
+        
+        button.danger {
+            background-color: var(--error-color);
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            width: auto;
+            margin-top: 0;
+            margin-bottom: 0; /* Danger button is special */
+        }
+        button.danger:hover {
+            background-color: #a00115;
+        }
+
+        #player-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        #player-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .settings-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .setting-item {
+            flex: 1;
+        }
+        .setting-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .setting-item input[type="number"] {
+            width: 100%; /* Make number inputs fill their container */
+        }
+
+        #error-message {
+            color: var(--error-color);
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+            min-height: 1.2em; /* Reserve space */
+        }
+
+        /* --- Game Screen (Role Reveal) --- */
+        #player-turn-display {
+            font-size: 1.3rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        #instructions {
+            text-align: center;
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        #role-display-container {
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        #role-display-content {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+        
+        #role-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin: 0;
+        }
+        
+        #role-word {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin: 10px 0 0 0;
+        }
+
+        /* --- Game Play Screen --- */
+        #game-play-screen p {
+            font-size: 1.1rem;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        /* Elimination List */
+        #elimination-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #elimination-list button {
+            background-color: var(--error-color);
+        }
+        #elimination-list button:hover {
+            background-color: #a00115;
+        }
+
+
+        /* --- Results Screen --- */
+        #results-message {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        /* RE-ADDED: Mr. White Guess Box */
+        #mr-white-guess-box {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        #mr-white-guess-box h3 {
+            color: var(--secondary-color);
+        }
+        #mr-white-guess-box input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        #all-roles-list {
+            list-style: none;
+            padding: 0;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        #all-roles-list li {
+            background: #f9f9f9;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        #all-roles-list strong {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="setup-screen" class="screen">
+            <h1>Undercover</h1>
+            
+            <h3>Add Players</h3>
+            <div id="player-input-group">
+                <input type="text" id="player-name-input" placeholder="Enter player name">
+                <button id="add-player-btn" class="inline">Add</button>
+            </div>
+            <ul id="player-list">
+                </ul>
+
+            <h3>Game Settings</h3>
+            <div class="settings-group">
+                <div class="setting-item">
+                    <label for="mr-white-count">Mr. Whites</label>
+                    <input type="number" id="mr-white-count" value="1" min="0" step="1">
+                </div>
+                <div class="setting-item">
+                    <label for="undercover-count">Undercovers</label>
+                    <input type="number" id="undercover-count" value="1" min="0" step="1">
+                </div>
+            </div>
+
+            <button id="start-game-btn" class="secondary">Start Game</button>
+            <p id="error-message"></p>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+            <h2 id="player-turn-display">It's Alice's turn...</h2>
+            <p id="instructions">Press the button below to see your role.</p>
+
+            <div id="role-display-container">
+                <div id="role-display-content" class="hidden">
+                    <h4 id="role-name">Role</h4>
+                    <h2 id="role-word">Word</h2>
+                </div>
+            </div>
+
+            <button id="show-role-btn">Show My Role</button>
+            <button id="next-player-btn" class="hidden">Hide Role & Pass to Next Player</button>
+        </div>
+        
+        <div id="game-play-screen" class="screen hidden">
+            <h2>Game Phase</h2>
+            <p>Discuss, and then vote to eliminate a player. Click their name below to cast the vote.</p>
+            
+            <div id="elimination-list">
+                </div>
+        </div>
+
+        <div id="results-screen" class="screen hidden">
+            <h2>Voting Results</h2>
+            <h3 id="results-message">Alice was eliminated!</h3>
+            
+            <div id="mr-white-guess-box" class="hidden">
+                <h3>As Mr. White, you get one guess!</h3>
+                <p>If you guess the Civilian word correctly, your team wins!</p>
+                <input type="text" id="mr-white-guess-input" placeholder="Guess the Civilian word...">
+                <button id="submit-guess-btn" class="secondary">Submit Guess</button>
+            </div>
+
+            <div id="game-over-summary" class="hidden">
+                <h3>Game Over! All Roles:</h3>
+                <ul id="all-roles-list">
+                    </ul>
+            </div>
+
+            <button id="next-round-btn" class="secondary hidden">Start Next Round</button>
+            <button id="restart-game-btn" class="hidden">Play Again</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Word List ---
+       const wordPairs = [
+    // Technology & Internet
+    { civilian: 'Apple', undercover: 'Microsoft' },
+    { civilian: 'Google', undercover: 'Bing' },
+    { civilian: 'Facebook', undercover: 'Twitter' },
+    { civilian: 'Instagram', undercover: 'Snapchat' },
+    { civilian: 'iPhone', undercover: 'Android' },
+    { civilian: 'Laptop', undercover: 'Desktop' },
+    { civilian: 'Keyboard', undercover: 'Mouse' },
+    { civilian: 'Code', undercover: 'Algorithm' },
+    { civilian: 'Hacker', undercover: 'Developer' },
+    { civilian: 'Email', undercover: 'Text Message' },
+    { civilian: 'Website', undercover: 'Blog' },
+    { civilian: 'Cloud', undercover: 'Server' },
+    { civilian: 'Wi-Fi', undercover: 'Ethernet' },
+    { civilian: 'Robot', undercover: 'Cyborg' },
+    { civilian: 'Drone', undercover: 'Satellite' },
+
+    // Food & Drink
+    { civilian: 'Pizza', undercover: 'Burger' },
+    { civilian: 'Coffee', undercover: 'Tea' },
+    { civilian: 'Apple', undercover: 'Pear' },
+    { civilian: 'Orange', undercover: 'Lemon' },
+    { civilian: 'Pasta', undercover: 'Noodles' },
+    { civilian: 'Rice', undercover: 'Quinoa' },
+    { civilian: 'Sushi', undercover: 'Sashimi' },
+    { civilian: 'Bread', undercover: 'Baguette' },
+    { civilian: 'Milk', undercover: 'Yogurt' },
+    { civilian: 'Cheese', undercover: 'Butter' },
+    { civilian: 'Chocolate', undercover: 'Caramel' },
+    { civilian: 'Wine', undercover: 'Beer' },
+    { civilian: 'Soda', undercover: 'Juice' },
+    { civilian: 'Pancake', undercover: 'Waffle' },
+    { civilian: 'Cookie', undercover: 'Brownie' },
+
+    // Animals
+    { civilian: 'Dog', undercover: 'Wolf' },
+    { civilian: 'Cat', undercover: 'Lion' },
+    { civilian: 'Bird', undercover: 'Dinosaur' },
+    { civilian: 'Fish', undercover: 'Shark' },
+    { civilian: 'Horse', undercover: 'Zebra' },
+    { civilian: 'Monkey', undercover: 'Gorilla' },
+    { civilian: 'Snake', undercover: 'Lizard' },
+    { civilian: 'Butterfly', undercover: 'Moth' },
+    { civilian: 'Bee', undercover: 'Wasp' },
+    { civilian: 'Spider', undercover: 'Scorpion' },
+    { civilian: 'Elephant', undercover: 'Mammoth' },
+    { civilian: 'Bear', undercover: 'Panda' },
+    { civilian: 'Mouse', undercover: 'Rat' },
+    { civilian: 'Eagle', undercover: 'Hawk' },
+    { civilian: 'Whale', undercover: 'Dolphin' },
+
+    // Pop Culture & Media
+    { civilian: 'Harry Potter', undercover: 'Lord of the Rings' },
+    { civilian: 'Batman', undercover: 'Superman' },
+    { civilian: 'Star Wars', undercover: 'Star Trek' },
+    { civilian: 'Marvel', undercover: 'DC' },
+    { civilian: 'Game of Thrones', undercover: 'Breaking Bad' },
+    { civilian: 'Friends', undercover: 'Seinfeld' },
+    { civilian: 'The Simpsons', undercover: 'Family Guy' },
+    { civilian: 'Mario', undercover: 'Sonic' },
+    { civilian: 'Zelda', undercover: 'Final Fantasy' },
+    { civilian: 'Monopoly', undercover: 'Chess' },
+    { civilian: 'Disney', undercover: 'Pixar' },
+    { civilian: 'Taylor Swift', undercover: 'Beyoncé' },
+    { civilian: 'Rock', undercover: 'Pop' },
+    { civilian: 'Movie', undercover: 'TV Show' },
+    { civilian: 'Book', undercover: 'Comic' },
+
+    // Nature & Geography
+    { civilian: 'Beach', undercover: 'Desert' },
+    { civilian: 'Mountain', undercover: 'Volcano' },
+    { civilian: 'River', undercover: 'Lake' },
+    { civilian: 'Ocean', undercover: 'Sea' },
+    { civilian: 'Forest', undercover: 'Jungle' },
+    { civilian: 'Island', undercover: 'Peninsula' },
+    { civilian: 'Rain', undercover: 'Snow' },
+    { civilian: 'Sun', undercover: 'Moon' },
+    { civilian: 'Star', undercover: 'Planet' },
+    { civilian: 'Earth', undercover: 'Mars' },
+    { civilian: 'Tree', undercover: 'Flower' },
+    { civilian: 'Grass', undercover: 'Moss' },
+    { civilian: 'Cloud', undercover: 'Fog' },
+    { civilian: 'Tornado', undercover: 'Hurricane' },
+    { civilian: 'Cave', undercover: 'Tunnel' },
+
+    // Objects & Items
+    { civilian: 'Guitar', undercover: 'Violin' },
+    { civilian: 'Piano', undercover: 'Organ' },
+    { civilian: 'Car', undercover: 'Motorcycle' },
+    { civilian: 'Bicycle', undercover: 'Skateboard' },
+    { civilian: 'Boat', undercover: 'Submarine' },
+    { civilian: 'Train', undercover: 'Bus' },
+    { civilian: 'House', undercover: 'Apartment' },
+    { civilian: 'Chair', undercover: 'Sofa' },
+    { civilian: 'Table', undercover: 'Desk' },
+    { civilian: 'Lamp', undercover: 'Candle' },
+    { civilian: 'Book', undercover: 'Magazine' },
+    { civilian: 'Pen', undercover: 'Pencil' },
+    { civilian: 'Watch', undercover: 'Clock' },
+    { civilian: 'Key', undercover: 'Lock' },
+    { civilian: 'Coin', undercover: 'Bill' },
+
+    // Concepts & Abstract
+    { civilian: 'Summer', undercover: 'Winter' },
+    { civilian: 'Day', undercover: 'Night' },
+    { civilian: 'Love', undercover: 'Hate' },
+    { civilian: 'Happy', undercover: 'Sad' },
+    { civilian: 'Good', undercover: 'Evil' },
+    { civilian: 'Peace', undercover: 'War' },
+    { civilian: 'Dream', undercover: 'Nightmare' },
+    { civilian: 'Art', undercover: 'Science' },
+    { civilian: 'Music', undercover: 'Silence' },
+    { civilian: 'Past', undercover: 'Future' },
+    { civilian: 'Life', undercover: 'Death' },
+    { civilian: 'Truth', undercover: 'Lie' },
+    { civilian: 'Light', undercover: 'Dark' },
+    { civilian: 'Beginning', undercover: 'End' },
+    { civilian: 'Order', undercover: 'Chaos' },
+
+    // Sports & Activities
+    { civilian: 'Soccer', undercover: 'Basketball' },
+    { civilian: 'Football', undercover: 'Rugby' },
+    { civilian: 'Baseball', undercover: 'Cricket' },
+    { civilian: 'Tennis', undercover: 'Badminton' },
+    { civilian: 'Golf', undercover: 'Mini Golf' },
+    { civilian: 'Swimming', undercover: 'Diving' },
+    { civilian: 'Running', undercover: 'Sprinting' },
+    { civilian: 'Yoga', undercover: 'Pilates' },
+    { civilian: 'Skiing', undercover: 'Snowboarding' },
+    { civilian: 'Boxing', undercover: 'Karate' },
+    { civilian: 'Hiking', undercover: 'Camping' },
+    { civilian: 'Fishing', undercover: 'Hunting' },
+    { civilian: 'Dancing', undercover: 'Singing' },
+    { civilian: 'Painting', undercover: 'Drawing' },
+    { civilian: 'Reading', undercover: 'Writing' },
+
+    // Professions
+    { civilian: 'Doctor', undercover: 'Surgeon' },
+    { civilian: 'Nurse', undercover: 'Paramedic' },
+    { civilian: 'Teacher', undercover: 'Professor' },
+    { civilian: 'Police', undercover: 'Detective' },
+    { civilian: 'Firefighter', undercover: 'Soldier' },
+    { civilian: 'Chef', undercover: 'Baker' },
+    { civilian: 'Artist', undercover: 'Musician' },
+    { civilian: 'Actor', undercover: 'Director' },
+    { civilian: 'Writer', undercover: 'Journalist' },
+    { civilian: 'Scientist', undercover: 'Engineer' },
+    { civilian: 'Lawyer', undercover: 'Judge' },
+    { civilian: 'Pilot', undercover: 'Astronaut' },
+    { civilian: 'Farmer', undercover: 'Gardener' },
+    { civilian: 'Architect', undercover: 'Designer' },
+    { civilian: 'Plumber', undercover: 'Electrician' },
+
+    // Clothing & Fashion
+    { civilian: 'Shirt', undercover: 'Blouse' },
+    { civilian: 'Pants', undercover: 'Jeans' },
+    { civilian: 'Shoes', undercover: 'Boots' },
+    { civilian: 'Hat', undercover: 'Cap' },
+    { civilian: 'Jacket', undercover: 'Coat' },
+    { civilian: 'Socks', undercover: 'Stockings' },
+    { civilian: 'Gloves', undercover: 'Mittens' },
+    { civilian: 'Scarf', undercover: 'Tie' },
+    { civilian: 'Dress', undercover: 'Skirt' },
+    { civilian: 'Ring', undercover: 'Necklace' },
+    { civilian: 'Bracelet', undercover: 'Anklet' },
+    { civilian: 'Glasses', undercover: 'Sunglasses' },
+    { civilian: 'T-shirt', undercover: 'Sweater' },
+    { civilian: 'Shorts', undercover: 'Capris' },
+    { civilian: 'Suit', undercover: 'Tuxedo' },
+
+    // Places & Buildings
+    { civilian: 'School', undercover: 'University' },
+    { civilian: 'Hospital', undercover: 'Clinic' },
+    { civilian: 'Library', undercover: 'Bookstore' },
+    { civilian: 'Museum', undercover: 'Art Gallery' },
+    { civilian: 'Restaurant', undercover: 'Cafe' },
+    { civilian: 'Hotel', undercover: 'Motel' },
+    { civilian: 'Airport', undercover: 'Train Station' },
+    { civilian: 'Bank', undercover: 'Post Office' },
+    { civilian: 'Church', undercover: 'Temple' },
+    { civilian: 'Castle', undercover: 'Palace' },
+    { civilian: 'Stadium', undercover: 'Arena' },
+    { civilian: 'Mall', undercover: 'Market' },
+    { civilian: 'Farm', undercover: 'Ranch' },
+    { civilian: 'Office', undercover: 'Factory' },
+    { civilian: 'Theater', undercover: 'Cinema' },
+
+    // Body Parts
+    { civilian: 'Hand', undercover: 'Foot' },
+    { civilian: 'Eye', undercover: 'Ear' },
+    { civilian: 'Nose', undercover: 'Mouth' },
+    { civilian: 'Head', undercover: 'Shoulder' },
+    { civilian: 'Arm', undercover: 'Leg' },
+    { civilian: 'Finger', undercover: 'Toe' },
+    { civilian: 'Heart', undercover: 'Brain' },
+    { civilian: 'Lungs', undercover: 'Stomach' },
+    { civilian: 'Bone', undercover: 'Muscle' },
+    { civilian: 'Hair', undercover: 'Nail' },
+    { civilian: 'Tooth', undercover: 'Tongue' },
+    { civilian: 'Knee', undercover: 'Elbow' },
+    { civilian: 'Skin', undercover: 'Blood' },
+    { civilian: 'Back', undercover: 'Chest' },
+    { civilian: 'Vein', undercover: 'Artery' },
+
+    // Fantasy & Mythology
+    { civilian: 'Dragon', undercover: 'Unicorn' },
+    { civilian: 'Wizard', undercover: 'Witch' },
+    { civilian: 'Elf', undercover: 'Dwarf' },
+    { civilian: 'Goblin', undercover: 'Orc' },
+    { civilian: 'Ghost', undercover: 'Zombie' },
+    { civilian: 'Vampire', undercover: 'Werewolf' },
+    { civilian: 'Angel', undercover: 'Demon' },
+    { civilian: 'Fairy', undercover: 'Gnome' },
+    { civilian: 'Mermaid', undercover: 'Siren' },
+    { civilian: 'Zeus', undercover: 'Odin' },
+    { civilian: 'Hercules', undercover: 'Thor' },
+    { civilian: 'Magic', undercover: 'Potion' },
+    { civilian: 'Sword', undercover: 'Shield' },
+    { civilian: 'Castle', undercover: 'Dungeon' },
+    { civilian: 'King', undercover: 'Queen' },
+
+    // Brands
+    { civilian: 'Nike', undercover: 'Adidas' },
+    { civilian: "McDonald's", undercover: 'Burger King' },
+    { civilian: 'Coca-Cola', undercover: 'Pepsi' },
+    { civilian: 'Ford', undercover: 'Toyota' },
+    { civilian: 'Lego', undercover: 'Play-Doh' },
+    { civilian: 'IKEA', undercover: 'Walmart' },
+    { civilian: 'Amazon', undercover: 'eBay' },
+    { civilian: 'Netflix', undercover: 'Hulu' },
+    { civilian: 'Spotify', undercover: 'Apple Music' },
+    { civilian: 'Starbucks', undercover: "Dunkin' Donuts" },
+    { civilian: 'Gucci', undercover: 'Prada' },
+    { civilian: 'Rolex', undercover: 'Omega' },
+    { civilian: 'Ferrari', undercover: 'Lamborghini' },
+    { civilian: 'Samsung', undercover: 'LG' },
+    { civilian: 'Visa', undercover: 'Mastercard' },
+    
+    // More Miscellaneous
+    { civilian: 'Fire', undercover: 'Ice' },
+    { civilian: 'Water', undercover: 'Air' },
+    { civilian: 'Gold', undercover: 'Silver' },
+    { civilian: 'Diamond', undercover: 'Ruby' },
+    { civilian: 'Bridge', undercover: 'Tunnel' },
+    { civilian: 'Road', undercover: 'Path' },
+    { civilian: 'Mirror', undercover: 'Window' },
+    { civilian: 'Door', undercover: 'Gate' },
+    { civilian: 'Cup', undercover: 'Mug' },
+    { civilian: 'Plate', undercover: 'Bowl' },
+    { civilian: 'Fork', undercover: 'Spoon' },
+    { civilian: 'Knife', undercover: 'Axe' },
+    { civilian: 'Rope', undercover: 'Chain' },
+    { civilian: 'Paper', undercover: 'Cardboard' },
+    { civilian: 'Paint', undercover: 'Ink' }
+];
+
+        // --- Game State ---
+        let players = []; // Master list: { id, name, role, word }
+        let playersInGame = []; // Active players
+        let currentPlayerIndex = 0; // For role reveal
+        let currentGameWords = {};
+
+        // --- DOM Element References ---
+        // Setup Screen
+        const setupScreen = document.getElementById('setup-screen');
+        const playerNameInput = document.getElementById('player-name-input');
+        const addPlayerBtn = document.getElementById('add-player-btn');
+        const playerList = document.getElementById('player-list');
+        const mrWhiteCountInput = document.getElementById('mr-white-count');
+        const undercoverCountInput = document.getElementById('undercover-count');
+        const startGameBtn = document.getElementById('start-game-btn');
+        const errorMessage = document.getElementById('error-message');
+
+        // Game Screen (Reveal)
+        const gameScreen = document.getElementById('game-screen');
+        const playerTurnDisplay = document.getElementById('player-turn-display');
+        const instructions = document.getElementById('instructions');
+        const roleDisplayContent = document.getElementById('role-display-content');
+        const roleName = document.getElementById('role-name');
+        const roleWord = document.getElementById('role-word');
+        const showRoleBtn = document.getElementById('show-role-btn');
+        const nextPlayerBtn = document.getElementById('next-player-btn');
+
+        // Game Play Screen
+        const gamePlayScreen = document.getElementById('game-play-screen');
+        const eliminationList = document.getElementById('elimination-list');
+
+        // Results Screen
+        const resultsScreen = document.getElementById('results-screen');
+        const resultsMessage = document.getElementById('results-message');
+        const gameOverSummary = document.getElementById('game-over-summary');
+        const allRolesList = document.getElementById('all-roles-list');
+        const nextRoundBtn = document.getElementById('next-round-btn');
+        const restartGameBtn = document.getElementById('restart-game-btn');
+        
+        // RE-ADDED: Mr. White Guess Box References
+        const mrWhiteGuessBox = document.getElementById('mr-white-guess-box');
+        const mrWhiteGuessInput = document.getElementById('mr-white-guess-input');
+        const submitGuessBtn = document.getElementById('submit-guess-btn');
+
+
+        // --- Event Listeners ---
+        addPlayerBtn.addEventListener('click', addPlayer);
+        playerNameInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') addPlayer();
+        });
+        playerList.addEventListener('click', removePlayer); // Event delegation
+        startGameBtn.addEventListener('click', startGame);
+        
+        submitGuessBtn.addEventListener('click', handleMrWhiteGuess); // RE-ADDED
+        
+        showRoleBtn.addEventListener('click', showRole);
+        nextPlayerBtn.addEventListener('click', nextPlayer);
+        
+        eliminationList.addEventListener('click', eliminatePlayer); // Event delegation
+        
+        nextRoundBtn.addEventListener('click', startNewRound);
+        restartGameBtn.addEventListener('click', restartGame);
+
+
+        // --- Setup Functions ---
+        function addPlayer() {
+            const name = playerNameInput.value.trim();
+            if (name) {
+                const player = {
+                    id: Date.now() + name, // Unique ID
+                    name: name
+                };
+                players.push(player);
+                renderPlayerList();
+                playerNameInput.value = '';
+                playerNameInput.focus();
+            }
+        }
+
+        function renderPlayerList() {
+            playerList.innerHTML = ''; // Clear existing list
+            players.forEach(player => {
+                const li = document.createElement('li');
+                li.textContent = player.name;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Remove';
+                removeBtn.classList.add('danger');
+                removeBtn.dataset.id = player.id;
+                
+                li.appendChild(removeBtn);
+                playerList.appendChild(li);
+            });
+        }
+
+        function removePlayer(e) {
+            if (e.target.classList.contains('danger')) {
+                const idToRemove = e.target.dataset.id;
+                players = players.filter(player => player.id !== idToRemove);
+                renderPlayerList();
+            }
+        }
+
+        // --- Role Reveal Logic ---
+        function startGame() {
+            // 1. Validate
+            const mrWhiteCount = parseInt(mrWhiteCountInput.value);
+            const undercoverCount = parseInt(undercoverCountInput.value);
+            const totalPlayers = players.length;
+            const totalSpecialRoles = mrWhiteCount + undercoverCount;
+
+            if (totalPlayers < 3) {
+                showError("You need at least 3 players to start.");
+                return;
+            }
+            if (totalSpecialRoles === 0) {
+                showError("You must have at least one Mr. White or Undercover.");
+                return;
+            }
+            if (totalSpecialRoles >= totalPlayers) {
+                showError("You can't have more special roles than players.");
+                return;
+            }
+            showError(""); // Clear errors
+
+            // 2. Assign Roles
+            currentGameWords = wordPairs[Math.floor(Math.random() * wordPairs.length)];
+            let roles = [];
+            for (let i = 0; i < mrWhiteCount; i++) roles.push('Mr. White');
+            for (let i = 0; i < undercoverCount; i++) roles.push('Undercover');
+            const civilianCount = totalPlayers - totalSpecialRoles;
+            for (let i = 0; i < civilianCount; i++) roles.push('Civilian');
+            
+            shuffleArray(roles);
+            shuffleArray(players); // Randomizes turn order
+
+            players.forEach((player, index) => {
+                player.role = roles[index];
+                if (player.role === 'Civilian') {
+                    player.word = currentGameWords.civilian;
+                } else if (player.role === 'Undercover') {
+                    player.word = currentGameWords.undercover;
+                } else if (player.role === 'Mr. White') {
+                    player.word = '???';
+                }
+            });
+
+            // 3. Reset state and transition
+            playersInGame = [...players]; // Copy players to the active game
+            currentPlayerIndex = 0;
+            setupScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+
+            // 4. Display first player's turn
+            displayCurrentPlayerTurn();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function displayCurrentPlayerTurn() {
+            // Get current player
+            const player = players[currentPlayerIndex];
+            
+            // Set UI to the "pre-reveal" state
+            playerTurnDisplay.textContent = `It's ${player.name}'s turn!`;
+            instructions.textContent = 'Press the button below to see your role.';
+            
+            // Populate the hidden role display
+            if (player.role === 'Mr. White') {
+                roleName.textContent = 'You are Mr. White!';
+                roleWord.textContent = 'Guess the word!';
+            } else {
+                roleName.textContent = 'Your Word'; // Hide "Civilian" / "Undercover"
+                roleWord.textContent = player.word;
+            }
+            
+            // Show/Hide the correct elements
+            roleDisplayContent.classList.add('hidden');
+            showRoleBtn.classList.remove('hidden');
+            nextPlayerBtn.classList.add('hidden');
+        }
+
+        function showRole() {
+            // Show the role and the "hide" button
+            roleDisplayContent.classList.remove('hidden');
+            nextPlayerBtn.classList.remove('hidden');
+            
+            // Hide the "show" button
+            showRoleBtn.classList.add('hidden');
+            instructions.textContent = 'Don\'t let anyone else see!';
+        }
+
+        function nextPlayer() {
+            currentPlayerIndex++;
+            
+            if (currentPlayerIndex < players.length) {
+                // If there are more players, show the next turn
+                displayCurrentPlayerTurn();
+            } else {
+                // All players have seen roles, move to game phase
+                showGamePlayScreen();
+            }
+        }
+        
+        // --- Game & Voting Logic ---
+        
+        function showGamePlayScreen() {
+            gameScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            gamePlayScreen.classList.remove('hidden');
+            
+            renderEliminationList();
+        }
+        
+        function renderEliminationList() {
+            eliminationList.innerHTML = ''; // Clear old buttons
+            playersInGame.forEach(player => {
+                const elimButton = document.createElement('button');
+                elimButton.textContent = `Eliminate ${player.name}`;
+                elimButton.dataset.id = player.id;
+                eliminationList.appendChild(elimButton);
+            });
+        }
+        
+        // MODIFIED: This function now handles the Mr. White guess
+        function eliminatePlayer(e) {
+            if (e.target.tagName !== 'BUTTON') return;
+            
+            const eliminatedPlayerId = e.target.dataset.id;
+            const eliminatedPlayer = playersInGame.find(p => p.id === eliminatedPlayerId);
+            
+            // Remove from active players
+            playersInGame = playersInGame.filter(p => p.id !== eliminatedPlayerId);
+            
+            // Show results
+            gamePlayScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            resultsMessage.textContent = `${eliminatedPlayer.name} was eliminated! Their role was: ${eliminatedPlayer.role}`;
+            
+            // Clear old game over summary
+            gameOverSummary.classList.add('hidden');
+            allRolesList.innerHTML = '';
+            
+            // Check for Mr. White guess
+            if (eliminatedPlayer.role === 'Mr. White') {
+                mrWhiteGuessBox.classList.remove('hidden');
+                mrWhiteGuessInput.value = '';
+                nextRoundBtn.classList.add('hidden');
+                restartGameBtn.classList.add('hidden');
+            } else {
+                // If not Mr. White, hide guess box and check win condition
+                mrWhiteGuessBox.classList.add('hidden');
+                checkWinCondition();
+            }
+        }
+
+        // RE-ADDED: Function to handle Mr. White's guess
+        function handleMrWhiteGuess() {
+            const guess = mrWhiteGuessInput.value.trim().toLowerCase();
+            const civilianWord = currentGameWords.civilian.trim().toLowerCase();
+            
+            mrWhiteGuessBox.classList.add('hidden');
+
+            if (guess === civilianWord) {
+                // Mr. White wins!
+                resultsMessage.textContent = 'Correct! Mr. White guessed the word. Undercovers & Mr. Whites Win!';
+                showGameOverSummary();
+                nextRoundBtn.classList.add('hidden');
+                restartGameBtn.classList.remove('hidden');
+            } else {
+                // Mr. White guessed wrong
+                resultsMessage.textContent = `Incorrect guess! Mr. White is out.`;
+                checkWinCondition(); // Check if game is over anyway
+            }
+        }
+        
+        function checkWinCondition() {
+            const remainingUndercovers = playersInGame.filter(p => p.role === 'Undercover').length;
+            const remainingMrWhites = playersInGame.filter(p => p.role === 'Mr. White').length;
+            const remainingCivilians = playersInGame.filter(p => p.role === 'Civilian').length;
+            const remainingSpecial = remainingUndercovers + remainingMrWhites;
+            
+            let gameOver = false;
+            let message = "";
+
+            // Win Condition 1: Civilians Win
+            if (remainingSpecial === 0) {
+                gameOver = true;
+                message = "All Undercovers and Mr. Whites are out. Civilians Win!";
+            }
+            // Win Condition 2: Special Roles Win
+            else if (remainingCivilians <= remainingSpecial) {
+                gameOver = true;
+                message = "Civilians are outnumbered. Undercovers & Mr. Whites Win!";
+            }
+
+            if (gameOver) {
+                // Append win message to existing results message
+                resultsMessage.textContent += `\n${message}`;
+                showGameOverSummary();
+                nextRoundBtn.classList.add('hidden');
+                restartGameBtn.classList.remove('hidden');
+            } else {
+                // Game continues
+                nextRoundBtn.classList.remove('hidden');
+                restartGameBtn.classList.add('hidden');
+            }
+        }
+        
+        function showGameOverSummary() {
+            gameOverSummary.classList.remove('hidden');
+            allRolesList.innerHTML = '';
+            
+            // Use the original 'players' array for the full reveal
+            players.forEach(player => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${player.name}:</strong> ${player.role} (${player.word})`;
+                allRolesList.appendChild(li);
+            });
+        }
+        
+        function startNewRound() {
+            // Go back to the discussion/elimination screen
+            resultsScreen.classList.add('hidden');
+            gamePlayScreen.classList.remove('hidden');
+            
+            // Clear results screen for next time
+            resultsMessage.textContent = '';
+            nextRoundBtn.classList.add('hidden');
+            
+            // Update the elimination list (since one player is gone)
+            renderEliminationList();
+        }
+
+        function restartGame() {
+            // Reset state
+            players = [];
+            playersInGame = [];
+            currentPlayerIndex = 0;
+            currentGameWords = {};
+
+            // Clear UI
+            playerList.innerHTML = '';
+            allRolesList.innerHTML = '';
+            playerNameInput.value = '';
+            mrWhiteCountInput.value = '1';
+            undercoverCountInput.value = '1';
+            showError('');
+            gameOverSummary.classList.add('hidden');
+            resultsMessage.textContent = '';
+            
+            mrWhiteGuessBox.classList.add('hidden'); // RE-ADDED
+            
+            // Reset screens
+            gameScreen.classList.add('hidden');
+            gamePlayScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            restartGameBtn.classList.add('hidden');
+            
+            setupScreen.classList.remove('hidden');
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+        }
+
+    </script>
+</body>
+</html>
