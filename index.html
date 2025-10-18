@@ -7,18 +7,23 @@
     
     <style>
         :root {
+            /* --- Dark Theme Colors --- */
             --primary-color: #4a90e2;
             --secondary-color: #f5a623;
-            --background-color: #f4f7f6;
-            --card-background: #ffffff;
-            --text-color: #333;
-            --error-color: #d0021b;
-            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --background-color: #282c34; /* Dark background */
+            --card-background: #3a3f4b;  /* Darker card */
+            --text-color: #f0f0f0;       /* Light text */
+            --text-color-secondary: #b0b0b0; /* Dimmer text */
+            --border-color: #555;
+            --input-background: #282c34;
+            --item-background: #4a4f5a;
+            --error-color: #e57373; /* Lighter red for dark bg */
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var:(--background-color);
+            background-color: var(--background-color);
             color: var(--text-color);
             margin: 0;
             padding: 20px;
@@ -62,9 +67,9 @@
         }
         h3 {
             font-size: 1.2rem;
-            color: #555;
+            color: var(--text-color-secondary);
             margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
         }
 
@@ -79,16 +84,18 @@
         input[type="number"] {
             flex-grow: 1;
             padding: 12px 15px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-background);
+            color: var(--text-color);
             border-radius: 8px;
             font-size: 1rem;
             box-sizing: border-box;
-            width: 100%; /* Fallback and for single inputs */
-            margin-bottom: 10px; /* Added margin */
+            width: 100%;
+            margin-bottom: 10px;
         }
         
         .setting-item input[type="number"] {
-            margin-bottom: 0; /* Override for settings */
+            margin-bottom: 0;
         }
 
         button {
@@ -101,8 +108,8 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
-            flex-shrink: 0; /* Prevents button from shrinking in flex */
-            width: 100%; /* Default to full width */
+            flex-shrink: 0;
+            width: 100%;
             margin-top: 10px;
         }
         button:hover {
@@ -115,7 +122,7 @@
         button.inline {
             width: auto;
             margin-top: 0;
-            margin-bottom: 10px; /* Added margin */
+            margin-bottom: 10px;
         }
 
         button.secondary {
@@ -126,16 +133,25 @@
         }
         
         button.danger {
-            background-color: var(--error-color);
+            background-color: #d0021b;
             font-size: 0.9rem;
             padding: 5px 10px;
             width: auto;
             margin-top: 0;
-            margin-bottom: 0; /* Danger button is special */
+            margin-bottom: 0;
         }
         button.danger:hover {
             background-color: #a00115;
         }
+        
+        /* New button style for New Game */
+        button.tertiary {
+            background-color: #666;
+        }
+        button.tertiary:hover {
+            background-color: #555;
+        }
+
 
         #player-list {
             list-style: none;
@@ -150,7 +166,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            background: #f9f9f9;
+            background: var(--item-background);
             border-radius: 6px;
             margin-bottom: 8px;
             font-size: 1.1rem;
@@ -171,7 +187,7 @@
             font-weight: 500;
         }
         .setting-item input[type="number"] {
-            width: 100%; /* Make number inputs fill their container */
+            width: 100%;
         }
 
         #error-message {
@@ -179,7 +195,7 @@
             text-align: center;
             font-weight: bold;
             margin-top: 15px;
-            min-height: 1.2em; /* Reserve space */
+            min-height: 1.2em;
         }
 
         /* --- Game Screen (Role Reveal) --- */
@@ -192,7 +208,7 @@
         
         #instructions {
             text-align: center;
-            color: #666;
+            color: var(--text-color-secondary);
             font-size: 1rem;
             margin-bottom: 20px;
         }
@@ -207,13 +223,13 @@
         }
 
         #role-display-content {
-            background: #f9f9f9;
+            background: var(--item-background);
             border-radius: 12px;
             padding: 30px;
             width: 100%;
             box-sizing: border-box;
             text-align: center;
-            border: 1px solid #eee;
+            border: 1px solid var(--border-color);
         }
         
         #role-name {
@@ -238,7 +254,6 @@
             margin-bottom: 25px;
         }
         
-        /* Elimination List */
         #elimination-list {
             display: flex;
             flex-direction: column;
@@ -248,7 +263,7 @@
             background-color: var(--error-color);
         }
         #elimination-list button:hover {
-            background-color: #a00115;
+            background-color: #b71c1c; /* Darker red on hover */
         }
 
 
@@ -261,11 +276,10 @@
             line-height: 1.5;
         }
         
-        /* RE-ADDED: Mr. White Guess Box */
         #mr-white-guess-box {
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--border-color);
         }
         #mr-white-guess-box h3 {
             color: var(--secondary-color);
@@ -282,7 +296,7 @@
             overflow-y: auto;
         }
         #all-roles-list li {
-            background: #f9f9f9;
+            background: var(--item-background);
             padding: 12px 15px;
             border-radius: 6px;
             margin-bottom: 10px;
@@ -290,6 +304,13 @@
         }
         #all-roles-list strong {
             color: var(--primary-color);
+        }
+
+        /* Container for end-game buttons */
+        .game-over-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -326,7 +347,7 @@
 
         <div id="game-screen" class="screen hidden">
             <h2 id="player-turn-display">It's Alice's turn...</h2>
-            <p id="instructions">Press the button below to see your role.</p>
+            <p id="instructions">Press the button below to see your word.</p>
 
             <div id="role-display-container">
                 <div id="role-display-content" class="hidden">
@@ -335,8 +356,8 @@
                 </div>
             </div>
 
-            <button id="show-role-btn">Show My Role</button>
-            <button id="next-player-btn" class="hidden">Hide Role & Pass to Next Player</button>
+            <button id="show-role-btn">Show My Word</button>
+            <button id="next-player-btn" class="hidden">Hide Word & Pass to Next Player</button>
         </div>
         
         <div id="game-play-screen" class="screen hidden">
@@ -365,12 +386,16 @@
             </div>
 
             <button id="next-round-btn" class="secondary hidden">Start Next Round</button>
-            <button id="restart-game-btn" class="hidden">Play Again</button>
+            
+            <div class="game-over-buttons hidden">
+                <button id="play-again-btn">Play Again</button>
+                <button id="new-game-btn" class="tertiary">New Game</button>
+            </div>
         </div>
 
     </div>
 
-    <script>
+   <script>
         // --- Word List ---
        const wordPairs = [
     // Technology & Internet
@@ -666,9 +691,13 @@
         const gameOverSummary = document.getElementById('game-over-summary');
         const allRolesList = document.getElementById('all-roles-list');
         const nextRoundBtn = document.getElementById('next-round-btn');
-        const restartGameBtn = document.getElementById('restart-game-btn');
         
-        // RE-ADDED: Mr. White Guess Box References
+        // Game Over Buttons
+        const gameOverButtonContainer = document.querySelector('.game-over-buttons');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const newGameBtn = document.getElementById('new-game-btn');
+        
+        // Mr. White Guess Box
         const mrWhiteGuessBox = document.getElementById('mr-white-guess-box');
         const mrWhiteGuessInput = document.getElementById('mr-white-guess-input');
         const submitGuessBtn = document.getElementById('submit-guess-btn');
@@ -682,7 +711,7 @@
         playerList.addEventListener('click', removePlayer); // Event delegation
         startGameBtn.addEventListener('click', startGame);
         
-        submitGuessBtn.addEventListener('click', handleMrWhiteGuess); // RE-ADDED
+        submitGuessBtn.addEventListener('click', handleMrWhiteGuess); 
         
         showRoleBtn.addEventListener('click', showRole);
         nextPlayerBtn.addEventListener('click', nextPlayer);
@@ -690,13 +719,23 @@
         eliminationList.addEventListener('click', eliminatePlayer); // Event delegation
         
         nextRoundBtn.addEventListener('click', startNewRound);
-        restartGameBtn.addEventListener('click', restartGame);
+        
+        // Game Over Listeners
+        playAgainBtn.addEventListener('click', playAgain);
+        newGameBtn.addEventListener('click', newGame);
 
 
         // --- Setup Functions ---
         function addPlayer() {
             const name = playerNameInput.value.trim();
             if (name) {
+                // Check for duplicate names (case-insensitive)
+                if (players.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+                    showError("A player with that name already exists.");
+                    return;
+                }
+                showError(""); // Clear error
+                
                 const player = {
                     id: Date.now() + name, // Unique ID
                     name: name
@@ -725,10 +764,13 @@
         }
 
         function removePlayer(e) {
+            // Only allow removing players from the setup screen
             if (e.target.classList.contains('danger')) {
-                const idToRemove = e.target.dataset.id;
-                players = players.filter(player => player.id !== idToRemove);
-                renderPlayerList();
+                if (!setupScreen.classList.contains('hidden')) {
+                    const idToRemove = e.target.dataset.id;
+                    players = players.filter(player => player.id !== idToRemove);
+                    renderPlayerList();
+                }
             }
         }
 
@@ -739,6 +781,7 @@
             const undercoverCount = parseInt(undercoverCountInput.value);
             const totalPlayers = players.length;
             const totalSpecialRoles = mrWhiteCount + undercoverCount;
+            const civilianCount = totalPlayers - totalSpecialRoles;
 
             if (totalPlayers < 3) {
                 showError("You need at least 3 players to start.");
@@ -748,8 +791,9 @@
                 showError("You must have at least one Mr. White or Undercover.");
                 return;
             }
-            if (totalSpecialRoles >= totalPlayers) {
-                showError("You can't have more special roles than players.");
+            // Civilians must have the majority at the start
+            if (civilianCount <= totalSpecialRoles) {
+                showError("You must have more Civilians than special roles.");
                 return;
             }
             showError(""); // Clear errors
@@ -759,12 +803,11 @@
             let roles = [];
             for (let i = 0; i < mrWhiteCount; i++) roles.push('Mr. White');
             for (let i = 0; i < undercoverCount; i++) roles.push('Undercover');
-            const civilianCount = totalPlayers - totalSpecialRoles;
             for (let i = 0; i < civilianCount; i++) roles.push('Civilian');
             
             shuffleArray(roles);
-            shuffleArray(players); // Randomizes turn order
-
+            
+            // Assign roles and words to the master player list
             players.forEach((player, index) => {
                 player.role = roles[index];
                 if (player.role === 'Civilian') {
@@ -775,11 +818,39 @@
                     player.word = '???';
                 }
             });
+            
+            // Shuffle turn order
+            shuffleArray(players);
+            
+            // Ensure Mr. White is not first
+            if (players[0].role === 'Mr. White') {
+                // Find the last non-Mr. White player to swap with
+                let swapIndex = -1;
+                for (let i = players.length - 1; i > 0; i--) {
+                    if (players[i].role !== 'Mr. White') {
+                        swapIndex = i;
+                        break;
+                    }
+                }
+                // If all players are Mr. White (which validation should prevent, but as a fallback)
+                // or a swap is found, perform the swap.
+                if (swapIndex !== -1) {
+                    [players[0], players[swapIndex]] = [players[swapIndex], players[0]];
+                }
+                // If swapIndex === -1 (e.g., only Mr. Whites left), we can't swap.
+                // But validation should prevent this scenario.
+            }
 
             // 3. Reset state and transition
             playersInGame = [...players]; // Copy players to the active game
             currentPlayerIndex = 0;
+            
+            // Hide all other screens
             setupScreen.classList.add('hidden');
+            gamePlayScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            
+            // Show the game screen
             gameScreen.classList.remove('hidden');
 
             // 4. Display first player's turn
@@ -794,34 +865,30 @@
         }
 
         function displayCurrentPlayerTurn() {
-            // Get current player
             const player = players[currentPlayerIndex];
             
-            // Set UI to the "pre-reveal" state
             playerTurnDisplay.textContent = `It's ${player.name}'s turn!`;
-            instructions.textContent = 'Press the button below to see your role.';
+            instructions.textContent = 'Press the button below to see your word.';
             
             // Populate the hidden role display
             if (player.role === 'Mr. White') {
                 roleName.textContent = 'You are Mr. White!';
                 roleWord.textContent = 'Guess the word!';
             } else {
-                roleName.textContent = 'Your Word'; // Hide "Civilian" / "Undercover"
+                roleName.textContent = 'Your Word';
                 roleWord.textContent = player.word;
             }
             
-            // Show/Hide the correct elements
+            // Set UI to the "pre-reveal" state
             roleDisplayContent.classList.add('hidden');
             showRoleBtn.classList.remove('hidden');
             nextPlayerBtn.classList.add('hidden');
         }
 
         function showRole() {
-            // Show the role and the "hide" button
             roleDisplayContent.classList.remove('hidden');
             nextPlayerBtn.classList.remove('hidden');
             
-            // Hide the "show" button
             showRoleBtn.classList.add('hidden');
             instructions.textContent = 'Don\'t let anyone else see!';
         }
@@ -858,7 +925,6 @@
             });
         }
         
-        // MODIFIED: This function now handles the Mr. White guess
         function eliminatePlayer(e) {
             if (e.target.tagName !== 'BUTTON') return;
             
@@ -882,15 +948,14 @@
                 mrWhiteGuessBox.classList.remove('hidden');
                 mrWhiteGuessInput.value = '';
                 nextRoundBtn.classList.add('hidden');
-                restartGameBtn.classList.add('hidden');
+                gameOverButtonContainer.classList.add('hidden'); // Hide end-game buttons
             } else {
                 // If not Mr. White, hide guess box and check win condition
                 mrWhiteGuessBox.classList.add('hidden');
-                checkWinCondition();
+                checkWinCondition(); // This function will decide what to show
             }
         }
 
-        // RE-ADDED: Function to handle Mr. White's guess
         function handleMrWhiteGuess() {
             const guess = mrWhiteGuessInput.value.trim().toLowerCase();
             const civilianWord = currentGameWords.civilian.trim().toLowerCase();
@@ -900,9 +965,7 @@
             if (guess === civilianWord) {
                 // Mr. White wins!
                 resultsMessage.textContent = 'Correct! Mr. White guessed the word. Undercovers & Mr. Whites Win!';
-                showGameOverSummary();
-                nextRoundBtn.classList.add('hidden');
-                restartGameBtn.classList.remove('hidden');
+                showGameOver(); // Game ends
             } else {
                 // Mr. White guessed wrong
                 resultsMessage.textContent = `Incorrect guess! Mr. White is out.`;
@@ -931,18 +994,25 @@
             }
 
             if (gameOver) {
-                // Append win message to existing results message
+                // --- GAME IS OVER ---
+                // Show final message and "Play Again" / "New Game" buttons
                 resultsMessage.textContent += `\n${message}`;
-                showGameOverSummary();
-                nextRoundBtn.classList.add('hidden');
-                restartGameBtn.classList.remove('hidden');
+                showGameOver();
             } else {
-                // Game continues
+                // --- GAME CONTINUES ---
+                // Show "Start Next Round" button
                 nextRoundBtn.classList.remove('hidden');
-                restartGameBtn.classList.add('hidden');
+                // Explicitly hide the game over buttons
+                gameOverButtonContainer.classList.add('hidden');
             }
         }
         
+        function showGameOver() {
+            showGameOverSummary();
+            nextRoundBtn.classList.add('hidden'); // Hide "Next Round"
+            gameOverButtonContainer.classList.remove('hidden'); // Show "Play Again" / "New Game"
+        }
+
         function showGameOverSummary() {
             gameOverSummary.classList.remove('hidden');
             allRolesList.innerHTML = '';
@@ -956,7 +1026,7 @@
         }
         
         function startNewRound() {
-            // Go back to the discussion/elimination screen
+            // This just goes back to the voting screen
             resultsScreen.classList.add('hidden');
             gamePlayScreen.classList.remove('hidden');
             
@@ -967,9 +1037,33 @@
             // Update the elimination list (since one player is gone)
             renderEliminationList();
         }
+        
+        // --- Game Over Functions ---
+        
+        function playAgain() {
+            // Restarts game with SAME players
+            // Reset game-specific state
+            playersInGame = [];
+            currentPlayerIndex = 0;
+            currentGameWords = {};
+            
+            // Clear UI elements
+            allRolesList.innerHTML = '';
+            gameOverSummary.classList.add('hidden');
+            resultsMessage.textContent = '';
+            mrWhiteGuessBox.classList.add('hidden');
+            gameOverButtonContainer.classList.add('hidden');
 
-        function restartGame() {
-            // Reset state
+            // Hide results screen
+            resultsScreen.classList.add('hidden');
+            
+            // Re-run setup logic (assigns new roles/words) and go to reveal screen
+            startGame();
+        }
+
+        function newGame() {
+            // Resets EVERYTHING and goes to setup screen
+            // Reset all state
             players = [];
             playersInGame = [];
             currentPlayerIndex = 0;
@@ -984,15 +1078,15 @@
             showError('');
             gameOverSummary.classList.add('hidden');
             resultsMessage.textContent = '';
+            mrWhiteGuessBox.classList.add('hidden'); 
             
-            mrWhiteGuessBox.classList.add('hidden'); // RE-ADDED
-            
-            // Reset screens
+            // Reset all screens
             gameScreen.classList.add('hidden');
             gamePlayScreen.classList.add('hidden');
             resultsScreen.classList.add('hidden');
-            restartGameBtn.classList.add('hidden');
+            gameOverButtonContainer.classList.add('hidden');
             
+            // Show setup screen
             setupScreen.classList.remove('hidden');
         }
 
