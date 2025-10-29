@@ -312,6 +312,17 @@
             gap: 10px;
             margin-top: 20px;
         }
+
+        /* --- Funny Copyright --- */
+        .funny-marquee {
+            position: fixed; /* Keeps it at the bottom */
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            font-size: 0.8rem; /* Makes it small */
+            color: var(--text-color-secondary); /* Uses your dim text color */
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
@@ -394,6 +405,8 @@
         </div>
 
     </div>
+
+    <marquee class="funny-marquee">© 2025 Anmol. This 100% original idea is definitely not borrowed.</marquee>
 
    <script src="words.js"></script>
 
@@ -543,7 +556,19 @@
             showError(""); // Clear errors
 
             // 2. Assign Roles
+            // NOTE: This relies on 'wordPairs' from 'words.js'
+            // If words.js is not present, this will fail.
+            if (typeof wordPairs === 'undefined' || wordPairs.length === 0) {
+                // Fallback words if words.js is missing
+                wordPairs = [
+                    { civilian: "Apple", undercover: "Orange" },
+                    { civilian: "Dog", undercover: "Wolf" },
+                    { civilian: "Sun", undercover: "Moon" }
+                ];
+                console.warn("words.js not found. Using fallback word list.");
+            }
             currentGameWords = wordPairs[Math.floor(Math.random() * wordPairs.length)];
+            
             let roles = [];
             for (let i = 0; i < mrWhiteCount; i++) roles.push('Mr. White');
             for (let i = 0; i < undercoverCount; i++) roles.push('Undercover');
@@ -821,7 +846,9 @@
             undercoverCountInput.value = '1';
             showError('');
             gameOverSummary.classList.add('hidden');
-customInstructions.textContent = '';
+            // Check if customInstructions exists before trying to set textContent
+            // const customInstructions = document.getElementById('custom-instructions'); // This element doesn't exist in your HTML
+            // if(customInstructions) customInstructions.textContent = '';
             mrWhiteGuessBox.classList.add('hidden'); 
             
             // Reset all screens
@@ -838,6 +865,6 @@ customInstructions.textContent = '';
             errorMessage.textContent = message;
         }
 
-    </script>
+   </script>
 </body>
 </html>
